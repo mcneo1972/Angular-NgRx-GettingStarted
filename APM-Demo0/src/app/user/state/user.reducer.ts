@@ -1,13 +1,42 @@
-export function userReducer(state, action) {
+import { User } from '../user';
 
-    switch (action.type) {
-        case 'TOGGLE_MASK_USERNAME':
-            return {
-                ...state,
-                maskUserName: action.payload
-            };
+/* NgRx */
+import { createFeatureSelector, createSelector } from '@ngrx/store';
+import { UserActions, UserActionTypes } from './user.actions';
 
-        default:
-            break;
-    }
+// State for this feature (User)
+export interface UserState {
+  maskUserName: boolean;
+  currentUser: User;
+}
+
+const initialState: UserState = {
+  maskUserName: true,
+  currentUser: null
+};
+
+// Selector functions
+const getUserFeatureState = createFeatureSelector<UserState>('users');
+
+export const getMaskUserName = createSelector(
+  getUserFeatureState,
+  state => state.maskUserName
+);
+
+export const getCurrentUser = createSelector(
+  getUserFeatureState,
+  state => state.currentUser
+);
+
+export function userReducer(state = initialState, action: UserActions): UserState {
+  switch (action.type) {
+    case UserActionTypes.MaskUserName:
+      return {
+        ...state,
+        maskUserName: action.payload
+      };
+
+    default:
+      return state;
+  }
 }
